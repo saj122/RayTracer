@@ -7,7 +7,7 @@ The technique is capable of producing a high degree of visual realism, more so t
 -- <cite>https://en.wikipedia.org/wiki/Ray_tracing_(graphics)
 
 ## Project 
-&nbsp;&nbsp;&nbsp;&nbsp;My application is a ray tracer program that generates an image of three spheres of varying materials. 
+&nbsp;&nbsp;&nbsp;&nbsp;My application is a ray tracer program that generates an image of spheres of varying materials. 
 I needed a way to return multiple classes, so I created a Pair generic class that holds two classes. I used the concept of recursion in sampling each pixel from each ray cast. 
 Basic polymorphism was used in creating materials and shapes. This allowed the calling of virtual functions when testing ray intersections and material appearance.
 Multithreading is used to calculate intersections, as well as, the scattering of light function. Right now only 64x36 image resolution can be rendered. Working on adding a thread queue for higher resolution. 
