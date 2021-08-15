@@ -2,6 +2,7 @@
 #define HITRECORD_H
 
 #include "Ray.hpp"
+#include "Vec3.hpp"
 
 class Material;
 
@@ -10,7 +11,7 @@ class Material;
 class HitRecord
 {
     public:
-        Point3 p;
+        Vec3 p;
         Vec3 normal;
         std::shared_ptr<Material> mat;
         double t;

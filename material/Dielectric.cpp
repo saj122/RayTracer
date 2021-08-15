@@ -1,11 +1,12 @@
 #include "Dielectric.hpp"
 
 #include "Ray.hpp"
+#include "Vec3.hpp"
 #include "HitRecord.hpp"
 
-bool Dielectric::scatter(const Ray& r_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const 
+bool Dielectric::scatter(const Ray& r_in, const HitRecord& rec, Vec3& attenuation, Ray& scattered) const 
 {
-    attenuation = Color(1.0, 1.0, 1.0);
+    attenuation = Vec3(1.0, 1.0, 1.0);
     double refraction_ratio = rec.front_face ? (1.0 / _index_refraction) : _index_refraction;
 
     Vec3 unit_direction = unit_vector(r_in.direction());

@@ -35,9 +35,6 @@ class Vec3
         double v[3];
 };
 
-using Point3 = Vec3;
-using Color = Vec3;
-
 inline std::ostream& operator<<(std::ostream &out, const Vec3 &v) 
 {
     return out << v.v[0] << ' ' << v.v[1] << ' ' << v.v[2];

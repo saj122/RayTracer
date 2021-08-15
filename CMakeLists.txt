@@ -2,11 +2,15 @@ cmake_minimum_required(VERSION 3.16.0)
 
 project(RayTracer)
 
+set(CMAKE_CXX_STANDARD 17)
+
 set(INC
     core/HitRecord.hpp
     core/Hittable.hpp
+    core/HittableList.hpp
     core/Material.hpp
     core/Utilities.hpp
+    core/Camera.hpp
     material/Lambertian.hpp
     material/Metal.hpp
     material/Dielectric.hpp
@@ -23,6 +27,8 @@ set(SRC
     math/Ray.cpp
     math/Vec3.cpp
     shapes/Sphere.cpp
+    core/Camera.cpp
+    core/HittableList.cpp
 )
 
 set(INC_DIRS

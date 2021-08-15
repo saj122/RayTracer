@@ -1,6 +1,6 @@
 #include "Ray.hpp"
 
-Point3 Ray::at(double t) const
+Vec3 Ray::at(double t) const
 {
-    return orig + t*dir;
+    return _orig + t*_dir;
 }

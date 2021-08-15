@@ -5,14 +5,14 @@
 
 class Ray;
 class HitRecord;
-class Color;
+class Vec3;
 
 class Dielectric : public Material 
 {
     public:
         Dielectric(double index_of_refraction) : _index_refraction(index_of_refraction) {}
 
-        virtual bool scatter(const Ray& r_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const override;
+        virtual bool scatter(const Ray& r_in, const HitRecord& rec, Vec3& attenuation, Ray& scattered) const override;
 
     public:
         double _index_refraction; 

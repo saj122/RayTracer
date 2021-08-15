@@ -10,10 +10,10 @@ class HitRecord;
 class Lambertian : public Material
 {
 	public:
-		Lambertian(const Color& a) : _albedo(a) {}
-		virtual bool scatter(const Ray& r_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const override;
+		Lambertian(const Vec3& a) : _albedo(a) {}
+		virtual bool scatter(const Ray& r_in, const HitRecord& rec, Vec3& attenuation, Ray& scattered) const override;
 	public:
-		Color _albedo;
+		Vec3 _albedo;
 };
 
 #endif

@@ -10,10 +10,10 @@ class HitRecord;
 class Metal : public Material
 {
 	public:
-		Metal(const Color& a, double f) : _albedo(a), _fuzz(f < 1.0 ? f : 1.0) {}
-		virtual bool scatter(const Ray& r_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const override;
-	public:
-		Color _albedo;
+		Metal(const Vec3& a, double f) : _albedo(a), _fuzz(f < 1.0 ? f : 1.0) {}
+		virtual bool scatter(const Ray& r_in, const HitRecord& rec, Vec3& attenuation, Ray& scattered) const override;
+	private:
+		Vec3 _albedo;
 		double _fuzz;
 };
 

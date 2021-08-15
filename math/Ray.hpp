@@ -6,22 +6,22 @@
 class Ray 
 {
     public:
-        Ray() {}
-        Ray(const Point3& origin, const Vec3& direction)
-            : orig(origin), dir(direction), tm(0.0) {}
+        Ray() : _orig{0.0,0.0,0.0}, _dir{0.0,0.0,0.0} {}
+        Ray(const Vec3& origin, const Vec3& direction)
+            : _orig(origin), _dir(direction), _tm(0.0) {}
 
-        Ray(const Point3& origin, const Vec3& direction, double time)
-            : orig(origin), dir(direction), tm(time) {}
+        Ray(const Vec3& origin, const Vec3& direction, double time)
+            : _orig(origin), _dir(direction), _tm(time) {}
 
-        Point3 origin() const  { return orig; }
-        Vec3 direction() const { return dir; }
-        double time() const    { return tm; }
+        Vec3 origin() const  { return _orig; }
+        Vec3 direction() const { return _dir; }
+        double time() const    { return _tm; }
 
-        Point3 at(double t) const;
-    public:
-        Point3 orig;
-        Vec3 dir;
-        double tm;
+        Vec3 at(double t) const;
+    private:
+        Vec3 _orig;
+        Vec3 _dir;
+        double _tm;
 };
 
 #endif
