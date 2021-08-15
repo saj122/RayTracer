@@ -12,6 +12,16 @@
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <thread>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
+#define STBI_MSC_SECURE_CRT
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+
+uint8_t* pixels = new uint8_t[1280 * 720 * 3];
 
 Vec3 ray_color(const Ray& r, const Hittable& world, int depth)
 {
@@ -33,6 +43,37 @@ Vec3 ray_color(const Ray& r, const Hittable& world, int depth)
     return (1.0-t)*Vec3(1.0, 1.0, 1.0) + t*Vec3(0.5, 0.7, 1.0);
 }
 
+void render(int n, Camera cam, HittableList world, int max_depth, int image_width, int image_height, int samples_per_pixel)
+{
+    int i = n % image_width;
+    int j = n / image_width;
+    Vec3 pixel_color(0,0,0);
+    for (int s = 0; s < samples_per_pixel; ++s) 
+    {
+        auto u = (i + random_double()) / (image_width-1);
+        auto v = (j + random_double()) / (image_height-1);
+        Ray r = cam.getRay(u, v);
+        pixel_color += ray_color(r, world, max_depth);
+    }
+    
+    auto r = pixel_color.x();
+    auto g = pixel_color.y();
+    auto b = pixel_color.z();
+
+    if (r != r) r = 0.0;
+    if (g != g) g = 0.0;
+    if (b != b) b = 0.0;
+
+    auto scale = 1.0 / samples_per_pixel;
+    r = sqrt(scale * r);
+    g = sqrt(scale * g);
+    b = sqrt(scale * b);
+
+    pixels[n*3] = static_cast<int>(256 * clamp(r, 0.0, 0.999));
+    pixels[n*3+1] = static_cast<int>(256 * clamp(g, 0.0, 0.999));
+    pixels[n*3+2] = static_cast<int>(256 * clamp(b, 0.0, 0.999));
+}
+
 HittableList random_scene()
 {
     HittableList world;
@@ -40,9 +81,9 @@ HittableList random_scene()
     auto ground_material = std::make_shared<Lambertian>(Vec3(0.5, 0.5, 0.5));
     world.add(std::make_shared<Sphere>(Vec3(0,-1000,0), 1000, ground_material));
 
-    for (int a = -11; a < 11; a++) 
+    for (int a = -5; a < 5; a++) 
     {
-        for (int b = -11; b < 11; b++) 
+        for (int b = -5; b < 5; b++) 
         {
             auto choose_mat = random_double();
             Vec3 center(a + 0.9*random_double(), 0.2, b + 0.9*random_double());
@@ -85,33 +126,13 @@ HittableList random_scene()
     return world;
 }
 
-void write_color(std::ostream &out, Vec3 pixel_color, int samples_per_pixel) 
-{
-    auto r = pixel_color.x();
-    auto g = pixel_color.y();
-    auto b = pixel_color.z();
-
-    if (r != r) r = 0.0;
-    if (g != g) g = 0.0;
-    if (b != b) b = 0.0;
-
-    auto scale = 1.0 / samples_per_pixel;
-    r = sqrt(scale * r);
-    g = sqrt(scale * g);
-    b = sqrt(scale * b);
-
-    out << static_cast<int>(256 * clamp(r, 0.0, 0.999)) << ' '
-        << static_cast<int>(256 * clamp(g, 0.0, 0.999)) << ' '
-        << static_cast<int>(256 * clamp(b, 0.0, 0.999)) << '\n';
-}
-
 int main(int argc, char** args)
 {
     const auto aspect_ratio = 16.0 / 9.0;
-    const int image_width = 1200;
+    const int image_width = 64;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
     const int samples_per_pixel = 10;
-    const int max_depth = 50;
+    const int max_depth = 5;
 
     auto world = random_scene();
 
@@ -125,23 +146,21 @@ int main(int argc, char** args)
 
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
-    for (int j = image_height-1; j >= 0; --j) 
+    std::vector<std::thread> threads;
+    threads.reserve(image_height*image_width);
+
+    for (int i = 0; i < image_height*image_width; i++) 
     {
-        std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
-        for (int i = 0; i < image_width; ++i) 
-        {
-            Vec3 pixel_color(0,0,0);
-            for (int s = 0; s < samples_per_pixel; ++s) 
-            {
-                auto u = (i + random_double()) / (image_width-1);
-                auto v = (j + random_double()) / (image_height-1);
-                Ray r = cam.getRay(u, v);
-                pixel_color += ray_color(r, world, max_depth);
-            }
-            write_color(std::cout, pixel_color, samples_per_pixel);
-        }
+        threads.push_back(std::thread(render, i, cam, world, max_depth, image_width, image_height, samples_per_pixel));
     }
 
+    for (auto &th : threads) 
+    {
+        th.join();
+    }
+
+    stbi_write_jpg("stbjpg3.jpg", image_width, image_height, 3, pixels, 100);
+    delete[] pixels;
     std::cerr << "\nDone.\n";
     return 0;
 }

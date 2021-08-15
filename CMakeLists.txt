@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.16.0)
 
 project(RayTracer)
 
+find_package(Threads REQUIRED)
+
 set(CMAKE_CXX_STANDARD 17)
 
 set(INC
@@ -17,6 +19,8 @@ set(INC
     math/Ray.hpp
     math/Vec3.hpp
     shapes/Sphere.hpp
+    external/stb/stb_image.h
+    external/stb/stb_image_write.h
 )
 
 set(SRC
@@ -36,8 +40,10 @@ set(INC_DIRS
     material
     math
     shapes
+    external/stb
 )
 
 include_directories(${INC_DIRS})
-
 add_executable(RayTracer ${SRC} ${INC})
+target_link_libraries(RayTracer Threads::Threads)
+
