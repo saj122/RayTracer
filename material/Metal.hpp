@@ -1,5 +1,5 @@
-#ifndef LAMBERTIAN_H
-#define LAMBERTIAN_H
+#ifndef METAL_H
+#define METAL_H
 
 #include "Material.hpp"
 #include "Vec3.hpp"
@@ -7,13 +7,14 @@
 class Ray;
 class HitRecord;
 
-class Lambertian : public Material
+class Metal : public Material
 {
 	public:
-		Lambertian(const Color& a) : _albedo(a) {}
+		Metal(const Color& a, double f) : _albedo(a), _fuzz(f < 1.0 ? f : 1.0) {}
 		virtual bool scatter(const Ray& r_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const override;
 	public:
 		Color _albedo;
+		double _fuzz;
 };
 
 #endif
