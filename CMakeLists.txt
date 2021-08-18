@@ -13,6 +13,8 @@ set(INC
     core/Material.hpp
     core/Utilities.hpp
     core/Camera.hpp
+    core/ThreadPool.hpp
+    core/ThreadsafeQueue.hpp
     material/Lambertian.hpp
     material/Metal.hpp
     material/Dielectric.hpp

@@ -8,6 +8,7 @@
 #include "Lambertian.hpp"
 #include "Metal.hpp"
 #include "Dielectric.hpp"
+#include "ThreadPool.hpp"
 
 #include <iostream>
 #include <limits>
@@ -129,10 +130,10 @@ HittableList random_scene()
 int main(int argc, char** args)
 {
     const auto aspect_ratio = 16.0 / 9.0;
-    const int image_width = 64;
+    const int image_width = 1280;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
-    const int samples_per_pixel = 10;
-    const int max_depth = 5;
+    const int samples_per_pixel = 1000;
+    const int max_depth = 50;
 
     auto world = random_scene();
 
@@ -146,18 +147,13 @@ int main(int argc, char** args)
 
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
-    std::vector<std::thread> threads;
-    threads.reserve(image_height*image_width);
+    ThreadPool tp;
 
-    for (int i = 0; i < image_height*image_width; i++) 
+    for (int i = 0; i < image_height*image_width; ++i) 
     {
-        threads.push_back(std::thread(render, i, cam, world, max_depth, image_width, image_height, samples_per_pixel));
+        tp.submit(std::bind(&render,i, cam, world, max_depth, image_width, image_height, samples_per_pixel));
     }
-
-    for (auto &th : threads) 
-    {
-        th.join();
-    }
+    tp.waitFinished();
 
     stbi_write_jpg("stbjpg3.jpg", image_width, image_height, 3, pixels, 100);
     delete[] pixels;
