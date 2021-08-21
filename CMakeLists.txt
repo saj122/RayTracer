@@ -18,6 +18,8 @@ set(INC
     core/Texture.hpp
     core/AABB.hpp
     core/BVH.hpp
+    core/Translate.hpp
+    core/Rotate.hpp
     textures/SolidColor.hpp
     textures/ImageTexture.hpp
     material/Lambertian.hpp
@@ -41,6 +43,8 @@ set(SRC
     core/Camera.cpp
     core/HittableList.cpp
     core/BVH.cpp
+    core/Translate.cpp
+    core/Rotate.cpp
 )
 
 set(INC_DIRS
