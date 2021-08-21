@@ -15,6 +15,11 @@ set(INC
     core/Camera.hpp
     core/ThreadPool.hpp
     core/ThreadsafeQueue.hpp
+    core/Texture.hpp
+    core/AABB.hpp
+    core/BVH.hpp
+    textures/SolidColor.hpp
+    textures/ImageTexture.hpp
     material/Lambertian.hpp
     material/Metal.hpp
     material/Dielectric.hpp
@@ -35,6 +40,7 @@ set(SRC
     shapes/Sphere.cpp
     core/Camera.cpp
     core/HittableList.cpp
+    core/BVH.cpp
 )
 
 set(INC_DIRS
@@ -43,6 +49,7 @@ set(INC_DIRS
     math
     shapes
     external/stb
+    textures
 )
 
 include_directories(${INC_DIRS})

@@ -3,10 +3,12 @@
 
 #include "Hittable.hpp"
 #include "Vec3.hpp"
+#include "Material.hpp"
 
 #include <memory>
 
-class Material;
+class HitRecord;
+class Ray;
 
 class Sphere : public Hittable
 {
