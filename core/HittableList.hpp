@@ -6,6 +6,10 @@
 #include <memory>
 #include <vector>
 
+class Ray;
+class HitRecord;
+class AABB;
+
 class HittableList : public Hittable 
 {
     public:

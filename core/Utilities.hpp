@@ -10,7 +10,7 @@ using std::shared_ptr;
 using std::make_shared;
 using std::sqrt;
 
-const double inf = std::numeric_limits<double>::infinity();
+const double infinity = std::numeric_limits<double>::infinity();
 const double pi = 3.1415926535897932385;
 
 inline double deg_to_rads(double degrees)

@@ -1,3 +1,6 @@
+#ifndef THREADSAFEQUEUE_H
+#define THREADSAFEQUEUE_H
+
 #include <memory>
 #include <mutex>
 #include <queue>
@@ -68,3 +71,5 @@ class ThreadsafeQueue
         std::queue<T> _data_queue;
         std::condition_variable _data_cond;
 };
+
+#endif

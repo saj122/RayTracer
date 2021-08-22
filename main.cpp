@@ -9,9 +9,9 @@
 #include "Metal.hpp"
 #include "Dielectric.hpp"
 #include "ThreadPool.hpp"
+#include "BVH.hpp"
 
 #include <iostream>
-#include <limits>
 #include <memory>
 #include <thread>
 
@@ -24,27 +24,26 @@
 
 uint8_t* pixels = new uint8_t[1280 * 720 * 3];
 
-Vec3 ray_color(const Ray& r, const Hittable& world, int depth)
+Vec3 ray_color(const Ray& r, const Vec3& background, const Hittable& world, int depth)
 {
     HitRecord rec;
     if (depth <= 0)
         return Vec3(0,0,0);
 
-    if (world.hit(r, 0.001, std::numeric_limits<double>::infinity(), rec)) 
-    {
-        Ray scattered;
-        Vec3 attenuation;
-        if (rec.mat->scatter(r, rec, attenuation, scattered))
-            return attenuation * ray_color(scattered, world, depth-1);
-        return Vec3(0,0,0);
-    }
+    if (!world.hit(r, 0.001, infinity, rec))
+        return background;
 
-    Vec3 unit_direction = unit_vector(r.direction());
-    auto t = 0.5*(unit_direction.y() + 1.0);
-    return (1.0-t)*Vec3(1.0, 1.0, 1.0) + t*Vec3(0.5, 0.7, 1.0);
+    Ray scattered;
+    Vec3 attenuation;
+    Vec3 emitted = rec.mat->emitted(rec.u, rec.v, rec.p);
+
+    if (!rec.mat->scatter(r, rec, attenuation, scattered))
+        return emitted;
+
+    return emitted + attenuation * ray_color(scattered, background, world, depth - 1);
 }
 
-void render(int n, Camera cam, HittableList world, int max_depth, int image_width, int image_height, int samples_per_pixel)
+void render(int n, Camera cam, Vec3 background, HittableList world, int max_depth, int image_width, int image_height, int samples_per_pixel)
 {
     int i = n % image_width;
     int j = n / image_width;
@@ -54,7 +53,7 @@ void render(int n, Camera cam, HittableList world, int max_depth, int image_widt
         auto u = (i + random_double()) / (image_width-1);
         auto v = (j + random_double()) / (image_height-1);
         Ray r = cam.getRay(u, v);
-        pixel_color += ray_color(r, world, max_depth);
+        pixel_color += ray_color(r, background, world, max_depth);
     }
     
     auto r = pixel_color.x();
@@ -124,7 +123,7 @@ HittableList random_scene()
     auto material3 = std::make_shared<Metal>(Vec3(0.7, 0.6, 0.5), 0.0);
     world.add(std::make_shared<Sphere>(Vec3(4, 1, 0), 1.0, material3));
 
-    return world;
+    return HittableList(std::make_shared<BVHNode>(world, 0.0, 1.0));
 }
 
 int main(int argc, char** args)
@@ -143,6 +142,8 @@ int main(int argc, char** args)
     auto dist_to_focus = 10.0;
     auto aperture = 0.1;
 
+    Vec3 background = Vec3(0.70, 0.80, 1.00);
+
     Camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
 
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
@@ -151,7 +152,7 @@ int main(int argc, char** args)
 
     for (int i = 0; i < image_height*image_width; ++i) 
     {
-        tp.submit(std::bind(&render,i, cam, world, max_depth, image_width, image_height, samples_per_pixel));
+        tp.submit(std::bind(&render,i, cam, background, world, max_depth, image_width, image_height, samples_per_pixel));
     }
     tp.waitFinished();
 
