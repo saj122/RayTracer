@@ -52,7 +52,7 @@ void render(int n, Camera cam, Vec3 background, HittableList world, int max_dept
     {
         auto u = (i + random_double()) / (image_width-1);
         auto v = (j + random_double()) / (image_height-1);
-        Ray r = cam.getRay(u, v);
+        Ray r = cam.getRay(u, 1.0 - v);
         pixel_color += ray_color(r, background, world, max_depth);
     }
     
