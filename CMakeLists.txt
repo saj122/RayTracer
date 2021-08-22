@@ -34,6 +34,7 @@ set(INC
     math/Vec3.hpp
     shapes/Sphere.hpp
     shapes/MovingSphere.hpp
+    shapes/Triangle.hpp
     external/stb/stb_image.h
     external/stb/stb_image_write.h
 )
@@ -51,6 +52,7 @@ set(SRC
     shapes/MovingSphere.cpp
     shapes/Box.cpp
     shapes/AARect.cpp
+    shapes/Triangle.cpp
     core/Camera.cpp
     core/HittableList.cpp
     core/BVH.cpp
@@ -72,3 +74,4 @@ include_directories(${INC_DIRS})
 add_executable(RayTracer ${SRC} ${INC})
 target_link_libraries(RayTracer Threads::Threads)
 
+add_subdirectory(tests)

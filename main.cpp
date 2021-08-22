@@ -22,7 +22,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
-uint8_t* pixels = new uint8_t[1280 * 720 * 3];
+uint8_t* pixels = new uint8_t[1920 * 1080 * 3];
 
 Vec3 ray_color(const Ray& r, const Vec3& background, const Hittable& world, int depth)
 {
